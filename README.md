@@ -2,14 +2,6 @@
 
 A Go application that monitors Ethereum events for finality tracking and sends metrics to DataDog. The application subscribes to `VerifyBatchesTrustedAggregator` events and calculates time deltas between L1 and L2 block timestamps.
 
-## Features
-
-- **Real-time Event Monitoring**: WebSocket-based event subscriptions
-- **Automatic Reconnection**: Robust connection handling with health checks
-- **DataDog Integration**: Direct API integration for metric reporting
-- **Systemd Service**: Production-ready service management
-- **Comprehensive Logging**: Journalctl integration for centralized logging
-
 ## Prerequisites
 
 - Go 1.24.4 or higher
