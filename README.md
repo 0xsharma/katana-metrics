@@ -6,9 +6,9 @@ A Go application that monitors Ethereum events for finality tracking and sends m
 
 - Go 1.24.4 or higher
 - Linux system with systemd
-- DataDog account with API key
 - Ethereum RPC endpoint (Alchemy, Infura, etc.)
 - Polygon zkEVM RPC endpoint
+- Datadog-Agent installed and running with DogStatsD enabled
 
 ## Quick Start
 
@@ -35,7 +35,7 @@ nano .env
 
 Required environment variables:
 ```bash
-# Ethereum RPC endpoint (will be converted to WebSocket automatically)
+# Ethereum RPC endpoint (websocket only)
 ETH_RPC=https://eth-mainnet.g.alchemy.com/v2/your-api-key
 
 # Polygon zkEVM proxy contract address
@@ -46,12 +46,6 @@ ROLLUP_ID=20
 
 # Rollup RPC endpoint for L2 queries
 ROLLUP_RPC=https://polygon-zkevm-mainnet.g.alchemy.com/v2/your-api-key
-
-# DataDog API key for sending metrics
-DATADOG_API_KEY=your-datadog-api-key
-
-# DataDog API URL (optional, defaults to https://api.datadoghq.com)
-DATADOG_API_URL=https://api.datadoghq.com
 ```
 
 ### 3. Test the Application
@@ -215,13 +209,6 @@ The application sends the following metrics to DataDog:
   - `rollup_id`: The rollup ID being monitored
 - **Value**: Time delta between L1 and L2 timestamps in seconds
 
-### DataDog Dashboard Setup
-
-1. Go to your DataDog dashboard
-2. Create a new dashboard
-3. Add a widget for the metric `katana_finality_tracker.l1_l2_time_delta`
-4. Set up alerts for unusual finality delays
-
 ## Service Configuration
 
 - The service runs with automatic restart on failure
@@ -292,4 +279,3 @@ For issues and questions:
 1. Check the logs: `sudo journalctl -u katana-finality-tracker`
 2. Verify environment configuration
 3. Test network connectivity to RPC endpoints
-4. Ensure DataDog API key is valid 
