@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// Configure logging to show timestamps and ensure immediate output
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.SetFlags(log.LstdFlags)
 	log.SetOutput(os.Stdout)
 
 	config := common.LoadConfig()
