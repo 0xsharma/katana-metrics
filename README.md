@@ -1,4 +1,4 @@
-# Katana Metrics Tracker
+# Katana Metrics
 
 A modular Go application for monitoring various metrics in the Katana rollup ecosystem. The application is designed to support multiple metrics scripts with shared infrastructure for Ethereum connections, L2 queries, and DataDog integration.
 
@@ -7,7 +7,7 @@ A modular Go application for monitoring various metrics in the Katana rollup eco
 The application follows a modular structure:
 
 ```
-finality-tracker/
+katana-metrics/
 ├── main.go                    # Entry point for the application
 ├── common/                    # Shared functionality
 │   ├── config.go             # Configuration management
@@ -23,6 +23,9 @@ finality-tracker/
 │   │   ├── balance_monitor.go
 │   │   └── README.md
 │   └── README.md             # Scripts documentation
+├── install.sh                 # Automated installation script
+├── uninstall.sh               # Automated uninstallation script
+├── katana-metrics.service     # Systemd service definition
 └── README.md                 # This file
 ```
 
@@ -56,7 +59,7 @@ Monitors vault balances and tracks revenue generation by:
 ```bash
 # Clone the repository
 git clone <repository-url>
-cd finality-tracker
+cd katana-metrics
 
 # Build the application
 go build -o katana-metrics
