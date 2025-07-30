@@ -14,9 +14,10 @@ import (
 
 const (
 	// Vault addresses
-	BaseFeeVaultAddr     = "0x4200000000000000000000000000000000000019"
-	L1FeeVaultAddr       = "0x420000000000000000000000000000000000001a"
-	OperatorFeeVaultAddr = "0x420000000000000000000000000000000000001B"
+	BaseFeeVaultAddr      = "0x4200000000000000000000000000000000000019"
+	L1FeeVaultAddr        = "0x420000000000000000000000000000000000001a"
+	OperatorFeeVaultAddr  = "0x420000000000000000000000000000000000001B"
+	SequencerFeeVaultAddr = "0x4200000000000000000000000000000000000011"
 
 	// Monitoring interval
 	MonitorInterval = 300 * time.Second
@@ -54,6 +55,12 @@ func NewBalanceMonitor(config commonpkg.Config, clients *commonpkg.Clients) *Bal
 			},
 			OperatorFeeVaultAddr: {
 				Address:  OperatorFeeVaultAddr,
+				Current:  big.NewInt(0),
+				Previous: big.NewInt(0),
+				Delta:    big.NewInt(0),
+			},
+			SequencerFeeVaultAddr: {
+				Address:  SequencerFeeVaultAddr,
 				Current:  big.NewInt(0),
 				Previous: big.NewInt(0),
 				Delta:    big.NewInt(0),
@@ -164,6 +171,9 @@ func (bm *BalanceMonitor) sendCurrentBalanceMetric(vault *VaultBalance) error {
 	case OperatorFeeVaultAddr:
 		metricName = "katana_balance_monitor.operator_fee_vault_balance"
 		vaultType = "operator_fee"
+	case SequencerFeeVaultAddr:
+		metricName = "katana_balance_monitor.sequencer_fee_vault_balance"
+		vaultType = "sequencer_fee"
 	default:
 		return fmt.Errorf("unknown vault address: %s", vault.Address)
 	}
@@ -201,6 +211,9 @@ func (bm *BalanceMonitor) sendDeltaMetric(vault *VaultBalance) error {
 	case OperatorFeeVaultAddr:
 		metricName = "katana_balance_monitor.operator_fee_vault_delta_300s"
 		vaultType = "operator_fee"
+	case SequencerFeeVaultAddr:
+		metricName = "katana_balance_monitor.sequencer_fee_vault_delta_300s"
+		vaultType = "sequencer_fee"
 	default:
 		return fmt.Errorf("unknown vault address: %s", vault.Address)
 	}
