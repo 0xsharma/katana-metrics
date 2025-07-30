@@ -1,6 +1,45 @@
-# Katana Finality Tracker
+# Katana Metrics Tracker
 
-A Go application that monitors Ethereum events for finality tracking and sends metrics to DataDog. The application subscribes to `VerifyBatchesTrustedAggregator` events and calculates time deltas between L1 and L2 block timestamps.
+A modular Go application for monitoring various metrics in the Katana rollup ecosystem. The application is designed to support multiple metrics scripts with shared infrastructure for Ethereum connections, L2 queries, and DataDog integration.
+
+## Architecture
+
+The application follows a modular structure:
+
+```
+finality-tracker/
+├── main.go                    # Entry point for the application
+├── common/                    # Shared functionality
+│   ├── config.go             # Configuration management
+│   ├── clients.go            # Client connections (Ethereum, L2, DataDog)
+│   ├── constants.go          # Shared constants and event signatures
+│   ├── types.go              # Shared data structures
+│   └── README.md             # Common package documentation
+├── scripts/                   # Individual metrics scripts
+│   ├── finality-tracker/     # L1-L2 finality timing metrics
+│   │   ├── finality_tracker.go
+│   │   └── README.md
+│   ├── balance-monitor/       # Vault balance monitoring
+│   │   ├── balance_monitor.go
+│   │   └── README.md
+│   └── README.md             # Scripts documentation
+└── README.md                 # This file
+```
+
+## Available Scripts
+
+### Finality Tracker
+Monitors the timing between L1 and L2 block finality by:
+- Subscribing to `VerifyBatchesTrustedAggregator` events
+- Calculating time deltas between L1 and L2 timestamps
+- Sending metrics to DataDog for monitoring
+
+### Balance Monitor
+Monitors vault balances and tracks revenue generation by:
+- Monitoring four vault addresses every 300 seconds
+- Tracking current balances of BaseFeeVault, L1FeeVault, OperatorFeeVault, and SequencerFeeVault
+- Calculating delta increases over 300-second intervals
+- Sending both current balance and delta metrics to DataDog
 
 ## Prerequisites
 
@@ -55,6 +94,16 @@ ROLLUP_RPC=https://polygon-zkevm-mainnet.g.alchemy.com/v2/your-api-key
 ./katana-finality-tracker
 ```
 
+## Adding New Scripts
+
+To add a new metrics script:
+
+1. Create a new directory under `scripts/` with a descriptive name
+2. Implement the script following the pattern in `scripts/README.md`
+3. Update `main.go` to include the new script if needed
+
+See `scripts/README.md` for detailed instructions on creating new scripts.
+
 ## Systemd Service Installation
 
 ### Option 1: Automated Installation (Recommended)
@@ -105,37 +154,17 @@ sudo systemctl enable katana-finality-tracker
 
 # Start the service
 sudo systemctl start katana-finality-tracker
-```
 
-#### 4. Verify Service Status
-
-```bash
-# Check service status
+# Check the service status
 sudo systemctl status katana-finality-tracker
-
-# View logs
-sudo journalctl -u katana-finality-tracker -f
-
-# Check if the service is running
-sudo systemctl is-active katana-finality-tracker
 ```
 
 ## Service Management
 
-### Start/Stop/Restart Service
+### Check Service Status
 
 ```bash
-# Start the service
-sudo systemctl start katana-finality-tracker
-
-# Stop the service
-sudo systemctl stop katana-finality-tracker
-
-# Restart the service
-sudo systemctl restart katana-finality-tracker
-
-# Reload configuration (if you changed .env)
-sudo systemctl reload katana-finality-tracker
+sudo systemctl status katana-finality-tracker
 ```
 
 ### View Logs
@@ -144,117 +173,34 @@ sudo systemctl reload katana-finality-tracker
 # View real-time logs
 sudo journalctl -u katana-finality-tracker -f
 
-# View logs from the last hour
-sudo journalctl -u katana-finality-tracker --since "1 hour ago"
-
-# View logs with timestamps
-sudo journalctl -u katana-finality-tracker -o short-iso
-
-# View error logs only
-sudo journalctl -u katana-finality-tracker -p err
-```
-
-### Service Configuration
-
-The service file includes:
-
-- **Automatic Restart**: Service restarts automatically if it crashes
-- **Environment Variables**: Loads from `/opt/katana-finality-tracker/.env`
-- **Security**: Runs with limited privileges and system protection
-- **Resource Limits**: Configured file descriptor and process limits
-- **Logging**: All output goes to systemd journal
-
-## Monitoring and Troubleshooting
-
-### Check Service Health
-
-```bash
-# Check if the service is running
-sudo systemctl is-active katana-finality-tracker
-
-# Check service status with details
-sudo systemctl status katana-finality-tracker
-
 # View recent logs
-sudo journalctl -u katana-finality-tracker -n 50
+sudo journalctl -u katana-finality-tracker --since "1 hour ago"
 ```
 
-### Common Issues
-
-1. **Service won't start**: Check logs with `journalctl -u katana-finality-tracker`
-2. **Environment variables not loaded**: Verify `.env` file exists and has correct permissions
-3. **Permission denied**: Ensure the `finality-tracker` user owns the application directory
-4. **Network connectivity**: Check if the service can reach the RPC endpoints
-
-### Debug Mode
-
-To run the application in debug mode:
+### Stop/Start/Restart Service
 
 ```bash
 # Stop the service
 sudo systemctl stop katana-finality-tracker
-
-# Run manually with debug output
-sudo -u finality-tracker /opt/katana-finality-tracker/katana-finality-tracker
-```
-
-## DataDog Integration
-
-The application sends the following metrics to DataDog:
-
-- **Metric Name**: `katana_finality_tracker.l1_l2_time_delta`
-- **Type**: Gauge
-- **Tags**: 
-  - `l2_block_number`: The L2 block number
-  - `rollup_id`: The rollup ID being monitored
-- **Value**: Time delta between L1 and L2 timestamps in seconds
-
-## Service Configuration
-
-- The service runs with automatic restart on failure
-- Environment variables are loaded from a secure file
-- All logs are captured in systemd journal
-- Resource limits are configured to prevent abuse
-
-## Updating the Application
-
-```bash
-# Stop the service
-sudo systemctl stop katana-finality-tracker
-
-# Backup the current binary
-sudo cp /opt/katana-finality-tracker/katana-finality-tracker /opt/katana-finality-tracker/katana-finality-tracker.backup
-
-# Copy the new binary
-sudo cp katana-finality-tracker /opt/katana-finality-tracker/
-
-# Set proper permissions
-sudo chown finality-tracker:finality-tracker /opt/katana-finality-tracker/katana-finality-tracker
-sudo chmod +x /opt/katana-finality-tracker/katana-finality-tracker
 
 # Start the service
 sudo systemctl start katana-finality-tracker
 
-# Verify it's running
-sudo systemctl status katana-finality-tracker
+# Restart the service
+sudo systemctl restart katana-finality-tracker
 ```
 
 ## Uninstallation
 
-### Option 1: Automated Uninstallation (Recommended)
+### Option 1: Automated Uninstallation
 
 ```bash
-# Make the uninstall script executable
+# Make the uninstallation script executable
 chmod +x uninstall.sh
 
 # Run the automated uninstallation
 sudo ./uninstall.sh
 ```
-
-The uninstall script will:
-- Stop and disable the service
-- Remove all service files
-- Clean up the application directory
 
 ### Option 2: Manual Uninstallation
 
@@ -273,9 +219,97 @@ sudo systemctl daemon-reload
 sudo rm -rf /opt/katana-finality-tracker
 ```
 
-## Support
+## Metrics
 
-For issues and questions:
-1. Check the logs: `sudo journalctl -u katana-finality-tracker`
-2. Verify environment configuration
-3. Test network connectivity to RPC endpoints
+The application sends the following metrics to DataDog:
+
+### Finality Tracker Metrics
+
+- **Metric Name**: `katana_finality_tracker.l1_l2_time_delta`
+- **Type**: Gauge
+- **Description**: Time difference between L1 timestamp and L2 block timestamp in seconds
+- **Tags**:
+  - `l2_block_number`: The L2 block number
+  - `rollup_id`: The rollup ID being monitored
+
+### Balance Monitor Metrics
+
+#### Current Balance Metrics
+- **Metric Name**: `katana_balance_monitor.basefee_vault_balance`
+- **Metric Name**: `katana_balance_monitor.l1fee_vault_balance`
+- **Metric Name**: `katana_balance_monitor.operator_fee_vault_balance`
+- **Metric Name**: `katana_balance_monitor.sequencer_fee_vault_balance`
+- **Type**: Gauge
+- **Description**: Current balance of each vault in wei
+- **Tags**:
+  - `vault_type`: Type of vault (basefee, l1fee, operator_fee, sequencer_fee)
+  - `vault_address`: The vault contract address
+  - `rollup_id`: The rollup ID being monitored
+
+#### Delta Metrics
+- **Metric Name**: `katana_balance_monitor.basefee_vault_delta_300s`
+- **Metric Name**: `katana_balance_monitor.l1fee_vault_delta_300s`
+- **Metric Name**: `katana_balance_monitor.operator_fee_vault_delta_300s`
+- **Metric Name**: `katana_balance_monitor.sequencer_fee_vault_delta_300s`
+- **Type**: Gauge
+- **Description**: Balance increase over the last 300 seconds in wei
+- **Tags**:
+  - `vault_type`: Type of vault (basefee, l1fee, operator_fee, sequencer_fee)
+  - `vault_address`: The vault contract address
+  - `rollup_id`: The rollup ID being monitored
+
+## Development
+
+### Project Structure
+
+- `main.go`: Application entry point
+- `common/`: Shared functionality for all scripts
+- `scripts/`: Individual metrics scripts
+- `install.sh`: Automated installation script
+- `uninstall.sh`: Automated uninstallation script
+- `katana-finality-tracker.service`: Systemd service definition
+
+### Adding New Scripts
+
+1. Create a new directory under `scripts/`
+2. Implement the script following the pattern in `scripts/README.md`
+3. Update `main.go` to include the new script
+4. Add documentation in the script's directory
+
+### Building
+
+```bash
+# Build the application
+go build -o katana-finality-tracker
+
+# Build for different architectures
+GOOS=linux GOARCH=amd64 go build -o katana-finality-tracker-linux-amd64
+GOOS=darwin GOARCH=amd64 go build -o katana-finality-tracker-darwin-amd64
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Service fails to start**: Check the logs with `sudo journalctl -u katana-finality-tracker -f`
+2. **Connection errors**: Verify your RPC endpoints are correct and accessible
+3. **DataDog metrics not appearing**: Ensure the DataDog agent is running and DogStatsD is enabled
+
+### Logs
+
+The application logs to systemd journal. View logs with:
+
+```bash
+# Real-time logs
+sudo journalctl -u katana-finality-tracker -f
+
+# Recent logs
+sudo journalctl -u katana-finality-tracker --since "1 hour ago"
+
+# All logs
+sudo journalctl -u katana-finality-tracker
+```
+
+## License
+
+[Add your license information here]
