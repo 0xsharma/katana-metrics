@@ -13,7 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/rpc"
 
-	commonpkg "github.com/0xsharma/katana-finality-tracker/common"
+	commonpkg "github.com/0xsharma/katana-metrics/common"
 )
 
 type FinalityTracker struct {

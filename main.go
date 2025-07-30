@@ -6,9 +6,9 @@ import (
 	"os"
 	"sync"
 
-	"github.com/0xsharma/katana-finality-tracker/common"
-	balancemonitor "github.com/0xsharma/katana-finality-tracker/scripts/balance-monitor"
-	finalitytracker "github.com/0xsharma/katana-finality-tracker/scripts/finality-tracker"
+	"github.com/0xsharma/katana-metrics/common"
+	balancemonitor "github.com/0xsharma/katana-metrics/scripts/balance-monitor"
+	finalitytracker "github.com/0xsharma/katana-metrics/scripts/finality-tracker"
 )
 
 func main() {

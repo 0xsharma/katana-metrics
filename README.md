@@ -59,7 +59,7 @@ git clone <repository-url>
 cd finality-tracker
 
 # Build the application
-go build -o katana-finality-tracker
+go build -o katana-metrics
 ```
 
 ### 2. Create Environment Configuration
@@ -91,7 +91,7 @@ ROLLUP_RPC=https://polygon-zkevm-mainnet.g.alchemy.com/v2/your-api-key
 
 ```bash
 # Run the application locally to test
-./katana-finality-tracker
+./katana-metrics
 ```
 
 ## Adding New Scripts
@@ -128,35 +128,35 @@ The installation script will:
 
 ```bash
 # Create the application directory
-sudo mkdir -p /opt/katana-finality-tracker
+sudo mkdir -p /opt/katana-metrics
 
 # Copy the application binary
-sudo cp katana-finality-tracker /opt/katana-finality-tracker/
+sudo cp katana-metrics /opt/katana-metrics/
 
 # Copy the environment file
-sudo cp .env /opt/katana-finality-tracker/
+sudo cp .env /opt/katana-metrics/
 
 # Set proper permissions
-sudo chmod +x /opt/katana-finality-tracker/katana-finality-tracker
+sudo chmod +x /opt/katana-metrics/katana-metrics
 ```
 
 #### 3. Install Systemd Service
 
 ```bash
 # Copy the service file to systemd directory
-sudo cp katana-finality-tracker.service /etc/systemd/system/
+sudo cp katana-metrics.service /etc/systemd/system/
 
 # Reload systemd to recognize the new service
 sudo systemctl daemon-reload
 
 # Enable the service to start on boot
-sudo systemctl enable katana-finality-tracker
+sudo systemctl enable katana-metrics
 
 # Start the service
-sudo systemctl start katana-finality-tracker
+sudo systemctl start katana-metrics
 
 # Check the service status
-sudo systemctl status katana-finality-tracker
+sudo systemctl status katana-metrics
 ```
 
 ## Service Management
@@ -164,30 +164,30 @@ sudo systemctl status katana-finality-tracker
 ### Check Service Status
 
 ```bash
-sudo systemctl status katana-finality-tracker
+sudo systemctl status katana-metrics
 ```
 
 ### View Logs
 
 ```bash
 # View real-time logs
-sudo journalctl -u katana-finality-tracker -f
+sudo journalctl -u katana-metrics -f
 
 # View recent logs
-sudo journalctl -u katana-finality-tracker --since "1 hour ago"
+sudo journalctl -u katana-metrics --since "1 hour ago"
 ```
 
 ### Stop/Start/Restart Service
 
 ```bash
 # Stop the service
-sudo systemctl stop katana-finality-tracker
+sudo systemctl stop katana-metrics
 
 # Start the service
-sudo systemctl start katana-finality-tracker
+sudo systemctl start katana-metrics
 
 # Restart the service
-sudo systemctl restart katana-finality-tracker
+sudo systemctl restart katana-metrics
 ```
 
 ## Uninstallation
@@ -206,17 +206,17 @@ sudo ./uninstall.sh
 
 ```bash
 # Stop and disable the service
-sudo systemctl stop katana-finality-tracker
-sudo systemctl disable katana-finality-tracker
+sudo systemctl stop katana-metrics
+sudo systemctl disable katana-metrics
 
 # Remove the service file
-sudo rm /etc/systemd/system/katana-finality-tracker.service
+sudo rm /etc/systemd/system/katana-metrics.service
 
 # Reload systemd
 sudo systemctl daemon-reload
 
 # Remove the application directory
-sudo rm -rf /opt/katana-finality-tracker
+sudo rm -rf /opt/katana-metrics
 ```
 
 ## Metrics
@@ -267,7 +267,7 @@ The application sends the following metrics to DataDog:
 - `scripts/`: Individual metrics scripts
 - `install.sh`: Automated installation script
 - `uninstall.sh`: Automated uninstallation script
-- `katana-finality-tracker.service`: Systemd service definition
+- `katana-metrics.service`: Systemd service definition
 
 ### Adding New Scripts
 
@@ -280,18 +280,18 @@ The application sends the following metrics to DataDog:
 
 ```bash
 # Build the application
-go build -o katana-finality-tracker
+go build -o katana-metrics
 
 # Build for different architectures
-GOOS=linux GOARCH=amd64 go build -o katana-finality-tracker-linux-amd64
-GOOS=darwin GOARCH=amd64 go build -o katana-finality-tracker-darwin-amd64
+GOOS=linux GOARCH=amd64 go build -o katana-metrics-linux-amd64
+GOOS=darwin GOARCH=amd64 go build -o katana-metrics-darwin-amd64
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Service fails to start**: Check the logs with `sudo journalctl -u katana-finality-tracker -f`
+1. **Service fails to start**: Check the logs with `sudo journalctl -u katana-metrics -f`
 2. **Connection errors**: Verify your RPC endpoints are correct and accessible
 3. **DataDog metrics not appearing**: Ensure the DataDog agent is running and DogStatsD is enabled
 
@@ -301,13 +301,13 @@ The application logs to systemd journal. View logs with:
 
 ```bash
 # Real-time logs
-sudo journalctl -u katana-finality-tracker -f
+sudo journalctl -u katana-metrics -f
 
 # Recent logs
-sudo journalctl -u katana-finality-tracker --since "1 hour ago"
+sudo journalctl -u katana-metrics --since "1 hour ago"
 
 # All logs
-sudo journalctl -u katana-finality-tracker
+sudo journalctl -u katana-metrics
 ```
 
 ## License

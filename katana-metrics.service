@@ -1,0 +1,25 @@
+[Unit]
+Description=Katana Metrics
+Documentation=https://github.com/0xsharma/katana-metrics
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/katana-metrics
+ExecStart=/opt/katana-metrics/katana-metrics
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=katana-metrics
+
+# Environment variables
+EnvironmentFile=/opt/katana-metrics/.env
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+[Install]
+WantedBy=multi-user.target 

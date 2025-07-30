@@ -1,4 +1,4 @@
-module github.com/0xsharma/katana-finality-tracker
+module github.com/0xsharma/katana-metrics
 
 go 1.24.4
 

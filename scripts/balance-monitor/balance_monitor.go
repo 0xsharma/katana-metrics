@@ -9,7 +9,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
-	commonpkg "github.com/0xsharma/katana-finality-tracker/common"
+	commonpkg "github.com/0xsharma/katana-metrics/common"
 )
 
 const (

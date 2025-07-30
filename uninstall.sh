@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Katana Finality Tracker Uninstallation Script
-# This script removes the finality tracker service and all related files
+# Katana Metrics Tracker Uninstallation Script
+# This script removes the metrics service and all related files
 
 set -e
 
@@ -30,18 +30,18 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-print_status "Starting Katana Finality Tracker uninstallation..."
+print_status "Starting Katana Metrics uninstallation..."
 
 # Stop and disable the service
 print_status "Stopping service..."
-systemctl stop katana-finality-tracker 2>/dev/null || true
+systemctl stop katana-metrics 2>/dev/null || true
 
 print_status "Disabling service..."
-systemctl disable katana-finality-tracker 2>/dev/null || true
+systemctl disable katana-metrics 2>/dev/null || true
 
 # Remove the service file
 print_status "Removing service file..."
-rm -f /etc/systemd/system/katana-finality-tracker.service
+rm -f /etc/systemd/system/katana-metrics.service
 
 # Reload systemd
 print_status "Reloading systemd..."
@@ -49,7 +49,7 @@ systemctl daemon-reload
 
 # Remove the application directory
 print_status "Removing application directory..."
-rm -rf /opt/katana-finality-tracker
+rm -rf /opt/katana-metrics
 
 
 print_status "Uninstallation completed successfully!"
